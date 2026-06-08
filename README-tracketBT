@@ -4,9 +4,9 @@
 
 Author: Baptiste Dubuis
 
-Version: 1.0
+Version: 1.1
 
-Package: trackerBT
+Package: net.sourceforge.bitext.tracker (formerly trackerBT)
 
 Description:
 
@@ -36,7 +36,9 @@ Installation:
      For example if user unpack trackerBT and lib in the same directory, from a 
      console using the command (you can simply copy/paste the following line):
 
-        javac -cp ext/ant.jar;ext/freemarker.jar;ext/groovy.jar;ext/jaxen-core.jar;ext/jaxen-jdom.jar;ext/jdom.jar;ext/kxml.jar;ext/saxpath.jar;ext/simple-upload-0.3.4.jar;ext/velocity.jar;ext/xalan.jar;ext/xerces.jar;ext/xml-apis.jar trackerBT/*.java
+        javac -cp "../ext/*" -d ../build net/sourceforge/bitext/tracker/*.java net/sourceforge/bitext/utils/*.java
+     (the tracker depends on the shared net.sourceforge.bitext.utils package; the
+      simplest option is to compile the whole tree: net/sourceforge/bitext/**/*.java)
 
    - To run trackerBT, a configuration file is needed. An example of such a file is 
      provided in the 'config.xml'. Feel free to change parameters in it according to 
@@ -78,4 +80,13 @@ Execution:
    classpath. For example with the following command and if the ext and trackerBT 
    directory are in the same directory:
 
-      java -cp ext/ant.jar;ext/freemarker.jar;ext/groovy.jar;ext/jaxen-core.jar;ext/jaxen-jdom.jar;ext/jdom.jar;ext/kxml.jar;ext/saxpath.jar;ext/simple-upload-0.3.4.jar;ext/velocity.jar;ext/xalan.jar;ext/xerces.jar;ext/xml-apis.jar;. trackerBT.Tracker
+      java -cp "build;ext/ant.jar;ext/freemarker.jar;ext/groovy.jar;ext/jaxen-core.jar;ext/jaxen-jdom.jar;ext/jdom.jar;ext/kxml.jar;ext/saxpath.jar;ext/simple-upload-0.3.4.jar;ext/velocity.jar;ext/xalan.jar;ext/xerces.jar;ext/xml-apis.jar" net.sourceforge.bitext.tracker.Tracker <configFile>
+
+   where <configFile> is the path to a tracker configuration file (see
+   example_tracker_config.xml). Sourcing env.sh / env.bat sets an equivalent
+   CLASSPATH so you can simply run:
+
+      java net.sourceforge.bitext.tracker.Tracker example_tracker_config.xml
+
+   Access control: net.sourceforge.bitext.tracker.ITorrentACL is provided as a hook
+   for restricting which torrents the tracker will serve.

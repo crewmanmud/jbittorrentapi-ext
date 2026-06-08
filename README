@@ -4,9 +4,14 @@
 
 Author: Baptiste Dubuis, Artificial Intelligence Laboratory, EPFL
 
-Version: 1.0
+Version: 1.1
 
 Webpage: http://sourceforge.net/projects/bitext/
+
+Note: The sources have been reorganised under the net.sourceforge.bitext.* package
+   namespace (bittorrent / tracker / utils) and a set of client extension points has
+   been added (pluggable piece storage and per-peer/torrent access control). See
+   README-jBittorrentAPI ("Extensibility") and README-tracketBT for details.
 
 Description:
 

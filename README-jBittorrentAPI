@@ -4,13 +4,19 @@
 
 Author: Baptiste Dubuis
 
-Version: 1.0
+Version: 1.1 (with extensibility additions; see "Extensibility" below)
 
 Description:
 
-   This package aims at providing users an intuitive and easy to use API to run 
+   This package aims at providing users an intuitive and easy to use API to run
    Bittorrent programs capable of creating and publishing torrent files, downloading
    them and also retrieving target files described in a torrent file.
+
+   NOTE: The source has been reorganised into the package
+   net.sourceforge.bitext.bittorrent (client), net.sourceforge.bitext.tracker
+   (tracker) and net.sourceforge.bitext.utils (bencode + helpers). The example
+   classes live in net.sourceforge.bitext. Update any old "jBittorrentAPI.*"
+   references accordingly.
 
    The package comes along with 4 simple example classes that implement each a 
    distinct part of the protocol:
@@ -24,13 +30,15 @@ Description:
 
 Compilation:
    
-   - Compile the files simply using java command from the src directory. For example, from a console using:
-        javac jBittorrentAPI/*.java
+   - Compile the files using javac from the src directory, placing the output in
+     ../build, with the bundled dependency jars (ext/*) on the classpath:
+        javac -cp "../ext/*" -d ../build net/sourceforge/bitext/**/*.java
+     (On shells without ** globbing, list the package directories explicitly.)
 
 Execution of the examples:
    - ExampleCreateTorrent: to be executed, the program needs some input parameters. 
      Therefore, the command to launch the execution is (from the src directory):
-        java jBittorrentAPI.ExampleCreateTorrent <torrentPath> <announceURL> <pieceLength> <filePath1> ... <filePathN> <..> <creator> <..> <comment>
+        java net.sourceforge.bitext.ExampleCreateTorrent <torrentPath> <announceURL> <pieceLength> <filePath1> ... <filePathN> <..> <creator> <..> <comment>
      Information about the parameters:
        - <torrentPath>: the path and name of the file the torrent will be saved as. 
          Must end with .torrent extension. No space in it
@@ -59,7 +67,7 @@ Execution of the examples:
    
    - ExamplePublish: to be executed, the program needs some input parameters. 
      Therefore, the command to launch the execution is:
-        java jBittorrentAPI.ExamplePublish <torrentPath> <trackerURL> <username> <password> <comment>
+        java net.sourceforge.bitext.ExamplePublish <torrentPath> <trackerURL> <username> <password> <comment>
      Information about the parameters:
        - <torrentPath>: the path and name of the torrent the user wants to publish.
        - <trackerURL>: the url of the tracker accepting torrent upload. Note here 
@@ -72,8 +80,8 @@ Execution of the examples:
 
    - ExampleDownloadFiles and ExampleShareFiles: to be executed the program needs only the torrent 
      path. Therefore, the command to launch the execution is:
-        java jBittorrentAPI.ExampleDownloadFiles <torrentPath> [<savingDirectory>]
-        java jBittorrentAPI.ExampleShareFiles <torrentPath> [<savingDirectory>]
+        java net.sourceforge.bitext.ExampleDownloadFiles <torrentPath> [<savingDirectory>]
+        java net.sourceforge.bitext.ExampleShareFiles <torrentPath> [<savingDirectory>]
 
      The savingDirectory parameter is optional and permit to choose in which directory
      the downloaded files will be saved or in the case of sharing, in which directory 
@@ -84,6 +92,34 @@ Execution of the examples:
      permit to share files with other bittorrent clients. Not only this program can 
      get files from other peers, but it is also necessary to seed the target files 
      the user wants to publish. Therefore, just after publishing the torrent file on 
-     a tracker, the users would run this program so that other peers can download 
+     a tracker, the users would run this program so that other peers can download
      the target files just published.
-     
+
+Extensibility:
+
+   The client (net.sourceforge.bitext.bittorrent.DownloadManager) exposes a few
+   extension points so it can be embedded in larger applications:
+
+   - Configurable save path. In addition to the original no-argument behaviour,
+     DownloadManager provides constructors that take an explicit save path:
+        new DownloadManager(torrent, clientID)
+        new DownloadManager(torrent, clientID, savePath)
+        new DownloadManager(torrent, clientID, savePath, pieceAcl)
+     When no save path is given, Constants.SAVEPATH is used as before.
+
+   - Pluggable piece storage (IFileProvider / FileManager). Piece persistence is
+     abstracted behind net.sourceforge.bitext.bittorrent.IFileProvider. The default
+     implementation, FileManager, stores pieces on disk; supply your own to back
+     storage with something else (memory, a database, etc.).
+
+   - Per-peer piece access control (IPieceACL). DownloadManager consults an
+     IPieceACL to decide which pieces a given peer may request
+     (getAuthorisedPieces / isAuthorisedForPiece). By default the manager authorises
+     all complete pieces; pass a custom IPieceACL to the constructor to restrict
+     pieces (for example, to gate content to authorised members). A matching
+     tracker-side hook, net.sourceforge.bitext.tracker.ITorrentACL, is provided as a
+     stub for restricting torrents.
+
+   - Graceful shutdown. DownloadManager and PeerUpdater can be stopped cleanly; the
+     manager closes all open files via IFileProvider.closeAllFiles() on stop.
+
