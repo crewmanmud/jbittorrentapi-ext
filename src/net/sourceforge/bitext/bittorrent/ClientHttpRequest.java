@@ -8,6 +8,7 @@
  *    a Bittorrent tracker that coordinates peers exchanges. *
  *
  * Copyright (C) 2007 Baptiste Dubuis, Artificial Intelligence Laboratory, EPFL
+ * Modifications copyright (C) 2011 Andrew McCallum
  *
  * This file is part of jbittorrentapi-v1.0.zip
  *
