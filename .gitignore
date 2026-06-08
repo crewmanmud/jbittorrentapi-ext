@@ -1,0 +1,10 @@
+# Build outputs
+build/
+*.class
+
+# Packaged artifacts (rebuilt from src/)
+/jBittorrentAPI.jar
+/trackerBT.jar
+
+# OS cruft
+Thumbs.db
