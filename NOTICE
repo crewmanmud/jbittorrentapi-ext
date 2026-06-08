@@ -1,0 +1,18 @@
+jbittorrentapi-ext
+Copyright (C) 2007 Baptiste Dubuis, Artificial Intelligence Laboratory, EPFL
+Extended fork maintained at https://github.com/crewmanmud/jbittorrentapi-ext
+
+This product is licensed under the GNU General Public License v2.0 or later
+(see LICENSE and GNU_GPL).
+
+The distributable ("fat") jar bundles the following third-party libraries; their
+licenses apply to the bundled code. See META-INF/THIRD-PARTY.txt in the jar for
+details:
+
+  * JDOM 1.0 (org.jdom)            - JDOM License (Apache/BSD-style)
+  * Simple 3.x (simple.http.*)     - LGPL / Apache License 2.0
+                                     (vendored as simpleweb:simple-upload:0.3.4)
+  * kXML 2 (org.kxml2)             - BSD-style (vendored as kxml:kxml:1.0;
+                                     runtime XML parser used by Simple)
+
+All are compatible with GPL-2.0-or-later.

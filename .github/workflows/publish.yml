@@ -1,0 +1,36 @@
+name: Publish to GitHub Packages
+
+# Publishes net.sourceforge.bitext:jbittorrentapi-ext to GitHub Packages.
+# Runs when a GitHub Release is published, or on manual dispatch.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # setup-java writes ~/.m2/settings.xml with a <server id="github">
+      # whose credentials come from the env vars referenced below.
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+          server-id: github
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_TOKEN
+
+      - name: Build and deploy
+        run: mvn --batch-mode --no-transfer-progress deploy
+        env:
+          MAVEN_USERNAME: ${{ github.actor }}
+          MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}

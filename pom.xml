@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    groupId is the GitHub owner so GitHub Packages and JitPack expose the same
+    coordinate (JitPack serves artifacts under com.github.<owner>). The Java
+    package remains net.sourceforge.bitext; groupId need not match it.
+  -->
+  <groupId>com.github.crewmanmud</groupId>
+  <artifactId>jbittorrentapi-ext</artifactId>
+  <version>1.2-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Java Bittorrent API (ext)</name>
+  <description>
+    Java implementation of the Bittorrent protocol: a client/API for publishing,
+    sharing and downloading files, plus a standalone tracker. Extended ("ext")
+    fork with configurable storage, piece ACLs and graceful shutdown.
+  </description>
+  <url>http://sourceforge.net/projects/bitext/</url>
+
+  <licenses>
+    <license>
+      <name>GNU General Public License v2.0 or later</name>
+      <url>https://www.gnu.org/licenses/old-licenses/gpl-2.0.html</url>
+      <distribution>repo</distribution>
+      <comments>GPL-2.0-or-later (see LICENSE / GNU_GPL)</comments>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <name>Baptiste Dubuis</name>
+      <organization>Artificial Intelligence Laboratory, EPFL</organization>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/crewmanmud/jbittorrentapi-ext</url>
+    <connection>scm:git:https://github.com/crewmanmud/jbittorrentapi-ext.git</connection>
+    <developerConnection>scm:git:git@github.com:crewmanmud/jbittorrentapi-ext.git</developerConnection>
+  </scm>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <!--
+      Source-level minimum is Java 7 (NIO.2 in FileManager.java rules out 1.6).
+      We target Java 8 because current build JDKs no longer emit 1.7 bytecode;
+      8 is the lowest verifiable floor.
+    -->
+    <maven.compiler.release>8</maven.compiler.release>
+  </properties>
+
+  <!--
+    The Simple 3.x HTTP server (package simple.http.*) used by the tracker is not
+    available on Maven Central (only the incompatible 4.x+ org.simpleframework.http
+    API is). Both required dependencies are therefore vendored from ext/ into an
+    in-repo file-based Maven repository so the build is fully reproducible and
+    network-independent, and so maven-shade-plugin can bundle them.
+  -->
+  <repositories>
+    <repository>
+      <id>vendored-ext</id>
+      <name>Vendored ext/ dependencies</name>
+      <url>file://${project.basedir}/maven-repo</url>
+      <releases><enabled>true</enabled></releases>
+      <snapshots><enabled>false</enabled></snapshots>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <!-- XML store for the tracker (org.jdom.*) -->
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.0</version>
+    </dependency>
+    <!-- Legacy "Simple" 3.x embedded HTTP server (simple.http.*) for the tracker -->
+    <dependency>
+      <groupId>simpleweb</groupId>
+      <artifactId>simple-upload</artifactId>
+      <version>0.3.4</version>
+    </dependency>
+    <!-- kXML pull parser: used by Simple at runtime to parse its Mapper.xml -->
+    <dependency>
+      <groupId>kxml</groupId>
+      <artifactId>kxml</artifactId>
+      <version>1.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- Sources live directly under src/net/... (no src/main/java layout) -->
+    <sourceDirectory>src</sourceDirectory>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+
+    <!-- Ship third-party attribution (META-INF/THIRD-PARTY.txt) inside the jar -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+      </plugin>
+
+      <!-- Build a self-contained ("fat") jar bundling jdom + Simple -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.6.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <createDependencyReducedPom>true</createDependencyReducedPom>
+              <filters>
+                <filter>
+                  <!-- Drop any signatures from bundled jars to keep the fat jar valid -->
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <!--
+                No license-merging transformers here: those strip bundled
+                LICENSE files. We keep jdom's META-INF/LICENSE.txt and ship our
+                own META-INF/THIRD-PARTY.txt (from src/main/resources) so the
+                fat jar carries attribution for the bundled jdom + Simple code.
+              -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Attach a -sources.jar for consumers -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals><goal>jar-no-fork</goal></goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/crewmanmud/jbittorrentapi-ext</url>
+    </repository>
+    <!-- Required to deploy the -SNAPSHOT version; GitHub Packages uses one URL -->
+    <snapshotRepository>
+      <id>github</id>
+      <name>GitHub Packages</name>
+      <url>https://maven.pkg.github.com/crewmanmud/jbittorrentapi-ext</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+</project>

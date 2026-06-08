@@ -2,6 +2,10 @@
 build/
 *.class
 
+# Maven build outputs
+target/
+dependency-reduced-pom.xml
+
 # Packaged artifacts (rebuilt from src/)
 /jBittorrentAPI.jar
 /trackerBT.jar

@@ -4,7 +4,7 @@
 
 Author: Baptiste Dubuis, Artificial Intelligence Laboratory, EPFL
 
-Version: 1.1
+Version: 1.2
 
 Webpage: http://sourceforge.net/projects/bitext/
 
@@ -49,6 +49,88 @@ Description:
    step by step. Please read the README-example for further information.
 
 
+Building with Maven:
+
+   A Maven build is provided (pom.xml). It compiles every source under src/
+   (both the jBittorrentAPI client and the trackerBT tracker) and produces a
+   single self-contained ("fat") jar.
+
+      mvn clean package
+
+   This creates target/jbittorrentapi-ext-1.2-SNAPSHOT.jar (the version is
+   1.2-SNAPSHOT during development; it becomes 1.2 at release), which bundles the
+   only runtime dependencies the tracker needs (JDOM, the legacy Simple 3.x HTTP
+   server, and kXML). The client half uses no third-party libraries. The build
+   targets Java 8 bytecode (the source requires at least Java 7 due to NIO.2 in
+   the file manager). Run, for example:
+
+      java -cp target/jbittorrentapi-ext-1.2-SNAPSHOT.jar \
+           net.sourceforge.bitext.tracker.Tracker example_tracker_config.xml
+
+   The vendored dependencies live in a small in-repo Maven repository
+   (maven-repo/) because the legacy Simple 3.x server is not published on Maven
+   Central. The classic manual build (javac -cp "../ext/*" ...) described in the
+   other README files still works too.
+
+Publishing to GitHub Packages:
+
+   The artifact is published to GitHub Packages
+   (https://maven.pkg.github.com/crewmanmud/jbittorrentapi-ext).
+
+   - Automated: publishing a GitHub Release (or running the "Publish to GitHub
+     Packages" workflow manually) deploys the artifact via
+     .github/workflows/publish.yml.
+   - Manual: add a <server> with id "github" to ~/.m2/settings.xml, using your
+     GitHub username and a personal access token with the write:packages scope,
+     then run:
+
+        mvn deploy
+
+Consuming the library:
+
+   Published coordinate (both channels): com.github.crewmanmud:jbittorrentapi-ext
+
+   Option A - JitPack (anonymous, no credentials):
+
+      <repositories>
+        <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+        </repository>
+      </repositories>
+
+      <dependency>
+        <groupId>com.github.crewmanmud</groupId>
+        <artifactId>jbittorrentapi-ext</artifactId>
+        <version>1.2</version>
+      </dependency>
+
+   JitPack builds the project on first request from the matching git tag and
+   caches the result (see jitpack.yml). For pre-release testing you can use a
+   branch build such as "main-SNAPSHOT" or a commit hash as the <version>.
+
+   Option B - GitHub Packages (requires authentication, even for reads):
+
+      <repositories>
+        <repository>
+          <id>github</id>
+          <url>https://maven.pkg.github.com/crewmanmud/jbittorrentapi-ext</url>
+        </repository>
+      </repositories>
+
+      <dependency>
+        <groupId>com.github.crewmanmud</groupId>
+        <artifactId>jbittorrentapi-ext</artifactId>
+        <version>1.2</version>
+      </dependency>
+
+   GitHub Packages requires a <server id="github"> in ~/.m2/settings.xml with
+   your GitHub username and a token holding the read:packages scope.
+
+   Because the artifact is a self-contained ("fat") jar, neither option pulls any
+   transitive dependencies.
+
+
    Java Bittorrent API is free software;
    you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -74,6 +156,11 @@ Content:
                               the jBittorrentAPI package
    - README-trackerBT : further instruction about how to compile and run the 
                          trackerBT package
+   - pom.xml : Maven build (produces the jbittorrentapi-ext fat jar, version 1.2)
+   - maven-repo/ : in-repo Maven repository holding the vendored ext/ dependencies
+   - jitpack.yml : JitPack build configuration (anonymous artifact distribution)
+   - .github/workflows/publish.yml : workflow that publishes to GitHub Packages
+   - NOTICE : third-party attribution for the bundled (shaded) libraries
    - env.bat : Environment configuration script for MS-Windows systems
    - env.sh  : Environment configuration script for UNIX systems
    - jBittorrentAPI.jar : compressed classes of the jBittorrentAPI package

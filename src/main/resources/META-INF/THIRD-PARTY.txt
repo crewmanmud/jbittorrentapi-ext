@@ -1,0 +1,30 @@
+jbittorrentapi-ext bundles ("shades") the following third-party libraries into
+its distributable jar. Their respective licenses and copyrights apply to those
+bundled classes.
+
+------------------------------------------------------------------------------
+JDOM  (package org.jdom, version 1.0)
+  Copyright (C) 2000-2004 Jason Hunter & Brett McLaughlin. All rights reserved.
+  License: the JDOM License (an Apache/BSD-style permissive license).
+  Full text retained in this jar at: META-INF/LICENSE.txt
+  Project: http://www.jdom.org/
+------------------------------------------------------------------------------
+Simple  (package simple.http.*, legacy 3.x series; vendored as
+         simpleweb:simple-upload:0.3.4)
+  Copyright (C) Niall Gallagher.
+  License: LGPL / Apache License 2.0 (the project has been distributed under
+  both over its history; the bundled 3.x binary predates the move to
+  Apache-2.0). Either way it is compatible with this project's
+  GPL-2.0-or-later license.
+  Project: https://sourceforge.net/projects/simpleweb/
+------------------------------------------------------------------------------
+kXML 2  (package org.kxml2, vendored as kxml:kxml:1.0)
+  Copyright (C) Stefan Haustein and contributors.
+  License: BSD-style permissive license. Used at runtime by Simple to parse its
+  Mapper.xml configuration. Compatible with GPL-2.0-or-later.
+  Project: http://kxml.org/
+------------------------------------------------------------------------------
+
+The jbittorrentapi-ext code itself is licensed under GPL-2.0-or-later; see the
+top-level LICENSE and GNU_GPL files. The combined/shaded artifact may be used
+under the terms of the GNU GPL (v2 or, at your option, any later version).

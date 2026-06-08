@@ -4,7 +4,7 @@
 
 Author: Baptiste Dubuis
 
-Version: 1.1
+Version: 1.2
 
 Package: net.sourceforge.bitext.tracker (formerly trackerBT)
 
@@ -24,8 +24,17 @@ Description:
    are sharing. This has require the use of the jdom library, a library for 
    reading, processing and creating XML files.
 
-   All these external libraries can be found in the ext directory, and must specified 
+   All these external libraries can be found in the ext directory, and must specified
    at compiling or running time.
+
+   Maven note: the project's pom.xml (see the main README) builds the tracker as
+   part of the single jbittorrentapi-ext fat jar. The tracker's actual runtime
+   dependencies are only jdom (XML store), the Simple 3.x HTTP server, and kXML
+   (the parser Simple uses for its Mapper.xml); the remaining jars in ext/ are
+   unused transitive dependencies of Simple template features. Run the tracker
+   from the fat jar with:
+
+      java -cp target/jbittorrentapi-ext-1.2.jar net.sourceforge.bitext.tracker.Tracker <config.xml>
 
 
 Installation:
