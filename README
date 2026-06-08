@@ -53,9 +53,10 @@ Building with Maven:
 
    A Maven build is provided (pom.xml). It compiles every source under src/
    (both the jBittorrentAPI client and the trackerBT tracker) and produces a
-   single self-contained ("fat") jar.
+   single self-contained ("fat") jar. A Maven Wrapper (./mvnw, pinned to Maven
+   3.9.9) is included so the same Maven is used locally, in CI, and on JitPack:
 
-      mvn clean package
+      ./mvnw clean package        (or: mvn clean package)
 
    This creates target/jbittorrentapi-ext-1.2-SNAPSHOT.jar (the version is
    1.2-SNAPSHOT during development; it becomes 1.2 at release), which bundles the

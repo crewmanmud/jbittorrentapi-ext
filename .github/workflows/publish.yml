@@ -30,7 +30,7 @@ jobs:
           server-password: MAVEN_TOKEN
 
       - name: Build and deploy
-        run: mvn --batch-mode --no-transfer-progress deploy
+        run: ./mvnw --batch-mode --no-transfer-progress deploy
         env:
           MAVEN_USERNAME: ${{ github.actor }}
           MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}

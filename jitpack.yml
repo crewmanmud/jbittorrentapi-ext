@@ -2,9 +2,10 @@
 # JitPack builds this repo on-demand (from a git tag/branch/commit) and serves
 # the artifact anonymously as com.github.crewmanmud:jbittorrentapi-ext:<ref>.
 #
-# openjdk11 supports the project's release=8 bytecode target and the
-# compiler/shade/source plugin versions, and avoids JitPack's older default JDK.
+# openjdk11 supports the project's release=8 bytecode target. We build with the
+# committed Maven Wrapper (./mvnw -> Maven 3.9.9) because JitPack's default Maven
+# is too old for maven-compiler-plugin 3.13.0 (which needs Maven >= 3.6.3).
 jdk:
   - openjdk11
 install:
-  - mvn install -DskipTests -B
+  - ./mvnw install -DskipTests -B
