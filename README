@@ -58,14 +58,13 @@ Building with Maven:
 
       ./mvnw clean package        (or: mvn clean package)
 
-   This creates target/jbittorrentapi-ext-1.2-SNAPSHOT.jar (the version is
-   1.2-SNAPSHOT during development; it becomes 1.2 at release), which bundles the
+   This creates target/jbittorrentapi-ext-1.2.jar, which bundles the
    only runtime dependencies the tracker needs (JDOM, the legacy Simple 3.x HTTP
    server, and kXML). The client half uses no third-party libraries. The build
    targets Java 8 bytecode (the source requires at least Java 7 due to NIO.2 in
    the file manager). Run, for example:
 
-      java -cp target/jbittorrentapi-ext-1.2-SNAPSHOT.jar \
+      java -cp target/jbittorrentapi-ext-1.2.jar \
            net.sourceforge.bitext.tracker.Tracker example_tracker_config.xml
 
    The vendored dependencies live in a small in-repo Maven repository
